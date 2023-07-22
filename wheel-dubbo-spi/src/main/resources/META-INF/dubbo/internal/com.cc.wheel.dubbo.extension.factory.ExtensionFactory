@@ -1,0 +1,2 @@
+adaptive=com.cc.wheel.dubbo.extension.factory.impl.AdaptiveExtensionFactory
+spi=com.cc.wheel.dubbo.extension.factory.impl.SpiExtensionFactory

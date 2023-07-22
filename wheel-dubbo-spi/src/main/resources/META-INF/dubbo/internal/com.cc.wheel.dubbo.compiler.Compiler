@@ -1,0 +1,2 @@
+adaptive=com.cc.wheel.dubbo.compiler.support.AdaptiveCompiler
+javassist=com.cc.wheel.dubbo.compiler.support.JavassistCompiler

@@ -1,0 +1,2 @@
+hello=com.cc.wheel.dubbo.extension.impl.HelloTestExtension
+world=com.cc.wheel.dubbo.extension.impl.WorldTestExtension
