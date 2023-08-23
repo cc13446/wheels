@@ -1,7 +1,3 @@
-application {
-    mainClass.set("Main")
-}
-
 val javassistVersion = "3.28.0-GA"
 
 dependencies {
