@@ -67,7 +67,7 @@ public class StatusMachineBuilder {
      */
     public EventBuilder configEvent(String eventName) {
         AssertUtils.assertNonBlank(eventName, "事件名字为空!");
-        return eventMap.computeIfAbsent(eventName, (name) -> new EventBuilder(this, name));
+        return eventMap.computeIfAbsent(eventName, EventBuilder::new);
     }
 
     /**

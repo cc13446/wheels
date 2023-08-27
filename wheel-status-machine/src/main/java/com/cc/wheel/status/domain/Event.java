@@ -1,5 +1,7 @@
 package com.cc.wheel.status.domain;
 
+import lombok.Getter;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
  * @date 2023/8/19
  */
 public class Event {
+
+    @Getter
     private final String eventName;
 
     private final boolean isTransaction;
@@ -24,13 +28,6 @@ public class Event {
         this.eventCallList = eventCallSet.stream().sorted(Comparator.comparingInt(RankCall::rank)).collect(Collectors.toUnmodifiableList());
         this.eventGuardList = eventGuardSet.stream().sorted(Comparator.comparingInt(RankCall::rank)).collect(Collectors.toUnmodifiableList());
         this.isTransaction = isTransaction;
-    }
-
-    /**
-     * @return 事件名字
-     */
-    public String getEventName() {
-        return eventName;
     }
 
     /**

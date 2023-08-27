@@ -4,6 +4,7 @@ import com.cc.wheel.status.domain.*;
 import com.cc.wheel.status.exception.StatusMachineException;
 import com.cc.wheel.status.utils.AssertUtils;
 import com.cc.wheel.status.utils.ConcurrentHashSet;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +18,7 @@ public class StatusBuilder {
 
     private final StatusMachineBuilder statusMachineBuilder;
 
+    @Getter
     private final String statusName;
 
     private final Set<EntryCall> entryCallSet = new ConcurrentHashSet<>();
@@ -29,13 +31,6 @@ public class StatusBuilder {
         AssertUtils.assertNonBlank(statusName, "状态名字为空!");
         this.statusMachineBuilder = statusMachineBuilder;
         this.statusName = statusName;
-    }
-
-    /**
-     * @return 状态名字
-     */
-    public String getStatusName() {
-        return statusName;
     }
 
     /**

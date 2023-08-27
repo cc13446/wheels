@@ -5,6 +5,7 @@ import com.cc.wheel.status.domain.EventCall;
 import com.cc.wheel.status.domain.EventGuard;
 import com.cc.wheel.status.utils.AssertUtils;
 import com.cc.wheel.status.utils.ConcurrentHashSet;
+import lombok.Getter;
 
 import java.util.Set;
 
@@ -14,8 +15,7 @@ import java.util.Set;
  */
 public class EventBuilder {
 
-    private final StatusMachineBuilder statusMachineBuilder;
-
+    @Getter
     private final String eventName;
 
     private boolean isTransaction;
@@ -24,17 +24,9 @@ public class EventBuilder {
 
     private final Set<EventGuard> eventGuardSet = new ConcurrentHashSet<>();
 
-    public EventBuilder(StatusMachineBuilder statusMachineBuilder, String eventName) {
+    public EventBuilder(String eventName) {
         AssertUtils.assertNonBlank(eventName, "事件名字为空!");
-        this.statusMachineBuilder = statusMachineBuilder;
         this.eventName = eventName;
-    }
-
-    /**
-     * @return 事件名字
-     */
-    public String getEventName() {
-        return eventName;
     }
 
     /**
