@@ -6,4 +6,6 @@ java: openJdk 11
 gradle : 8.1.1
 
 ## Goal
-1. The Spi Extension in Dubbo
+1. The Spi Extension in dubbo
+2. A simple delay task with anti-shake and throttle
+3. A simple status machine
