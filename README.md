@@ -11,3 +11,4 @@ gradle : 8.1.1
 3. A simple status machine
 4. The datasource pool factory in mybatis
 5. A message queue using file
+6. The ioc framework in spring
