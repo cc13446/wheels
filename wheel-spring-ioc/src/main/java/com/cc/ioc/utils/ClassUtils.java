@@ -5,10 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 工具类
@@ -48,7 +47,7 @@ public class ClassUtils {
      * @param filter      class 过滤
      * @return 包下的所有符合条件的类
      */
-    public static List<Class<?>> findClass(String packageName, Function<Class<?>, Boolean> filter) {
+    public static Set<Class<?>> findClass(String packageName, Function<Class<?>, Boolean> filter) {
         List<Class<?>> res = new ArrayList<>(128);
 
         // 将包名替换成目录
@@ -63,7 +62,7 @@ public class ClassUtils {
 
         // 获取包下的类
         doFindClass(packageName, file, filter, res);
-        return res;
+        return new HashSet<>(res);
     }
 
     /**
@@ -111,5 +110,29 @@ public class ClassUtils {
      */
     private static String concatClassName(String basePackageName, String fileName) {
         return basePackageName + PACKAGE_SEPARATOR + fileName.replace(CLASS_SUFFIX, StringUtils.EMPTY);
+    }
+
+    /**
+     * @param c class
+     * @return 所有接口名
+     */
+    public static Set<String> getInterfaceNames(Class<?> c) {
+        Set<String> interfaceNames = new HashSet<>();
+        for (Class<?> temp = c; Objects.nonNull(temp) && !temp.equals(Object.class); temp = temp.getSuperclass()) {
+            interfaceNames.addAll(Arrays.stream(c.getInterfaces()).flatMap(i -> getClassNames(i).stream()).collect(Collectors.toSet()));
+        }
+        return interfaceNames;
+    }
+
+    /**
+     * @param c class
+     * @return 所有类名
+     */
+    public static Set<String> getClassNames(Class<?> c) {
+        Set<String> classNames = new HashSet<>();
+        for (Class<?> temp = c; Objects.nonNull(temp) && !temp.equals(Object.class); temp = temp.getSuperclass()) {
+            classNames.add(temp.getName());
+        }
+        return classNames;
     }
 }

@@ -1,6 +1,7 @@
 package com.cc.ioc.core.impl;
 
-import com.cc.ioc.annotation.Bean;
+import com.cc.ioc.annotation.Component;
+import com.cc.ioc.annotation.Primary;
 import com.cc.ioc.bean.BeanDefinition;
 import com.cc.ioc.core.BeanFactory;
 import com.cc.ioc.utils.ClassUtils;
@@ -74,10 +75,18 @@ public class BeanFactoryImpl implements BeanFactory {
      */
     private Set<BeanDefinition> findComponents(String basePackage) {
         Set<BeanDefinition> candidates = new HashSet<>();
-        List<Class<?>> classes = ClassUtils.findClass(basePackage, c -> c.isAnnotationPresent(Bean.class));
+        Set<Class<?>> classes = ClassUtils.findClass(basePackage, c -> c.isAnnotationPresent(Component.class));
+        for (Class<?> c : classes) {
+            Component component = c.getAnnotation(Component.class);
+            boolean isPrimary = c.isAnnotationPresent(Primary.class);
 
+            Set<String> classNames = ClassUtils.getClassNames(c);
+            Set<String> interfaceNames = ClassUtils.getInterfaceNames(c);
+            // candidates.add(new BeanDefinition(isPrimary, component.value(), classNames, interfaceNames));
+        }
         return candidates;
     }
+
 
     @Override
     public <T> T getBean(String name, Class<T> tClass) {
