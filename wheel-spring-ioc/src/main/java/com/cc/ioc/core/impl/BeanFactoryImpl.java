@@ -1,7 +1,9 @@
 package com.cc.ioc.core.impl;
 
+import com.cc.ioc.annotation.Bean;
 import com.cc.ioc.bean.BeanDefinition;
 import com.cc.ioc.core.BeanFactory;
+import com.cc.ioc.utils.ClassUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -72,6 +74,7 @@ public class BeanFactoryImpl implements BeanFactory {
      */
     private Set<BeanDefinition> findComponents(String basePackage) {
         Set<BeanDefinition> candidates = new HashSet<>();
+        List<Class<?>> classes = ClassUtils.findClass(basePackage, c -> c.isAnnotationPresent(Bean.class));
 
         return candidates;
     }

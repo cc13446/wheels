@@ -1,9 +1,9 @@
 package com.cc.ioc.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ import java.util.function.Function;
  * @author cc
  * @date 2023/9/30
  */
+@Slf4j
 public class ClassUtils {
 
     /**
@@ -46,9 +47,8 @@ public class ClassUtils {
      * @param packageName 包名
      * @param filter      class 过滤
      * @return 包下的所有符合条件的类
-     * @throws ClassNotFoundException class not found
      */
-    public static List<Class<?>> findClass(String packageName, Function<Class<?>, Boolean> filter) throws ClassNotFoundException {
+    public static List<Class<?>> findClass(String packageName, Function<Class<?>, Boolean> filter) {
         List<Class<?>> res = new ArrayList<>(128);
 
         // 将包名替换成目录
@@ -71,9 +71,8 @@ public class ClassUtils {
      * @param file        文件
      * @param filter      class 过滤
      * @param res         结果
-     * @throws ClassNotFoundException class not found
      */
-    private static void doFindClass(String packageName, File file, Function<Class<?>, Boolean> filter, List<Class<?>> res) throws ClassNotFoundException {
+    private static void doFindClass(String packageName, File file, Function<Class<?>, Boolean> filter, List<Class<?>> res) {
         File[] files = file.listFiles();
         if (Objects.isNull(files)) {
             return;
@@ -84,9 +83,13 @@ public class ClassUtils {
                 doFindClass(concatPackageName(packageName, f.getName()), f, filter, res);
             } else if (f.getName().endsWith(CLASS_SUFFIX)) {
                 // 如果是类文件, 反射出实例
-                Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(concatClassName(packageName, f.getName()));
-                if (Boolean.TRUE.equals(filter.apply(clazz))) {
-                    res.add(clazz);
+                try {
+                    Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(concatClassName(packageName, f.getName()));
+                    if (Boolean.TRUE.equals(filter.apply(clazz))) {
+                        res.add(clazz);
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.info("Can not found class {}.{}", packageName, f.getName());
                 }
             }
         }
