@@ -7,6 +7,7 @@ import com.cc.ioc.annotation.Qualifier;
 import com.cc.ioc.bean.BeanDefinition;
 import com.cc.ioc.bean.ConstructorDefinition;
 import com.cc.ioc.bean.PropertyDefinition;
+import com.cc.ioc.bean.base.NameDefinition;
 import com.cc.ioc.core.BeanFactory;
 import com.cc.ioc.utils.ClassUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -110,24 +111,103 @@ public class BeanFactoryImpl implements BeanFactory {
      */
     private void doDI() {
         for (BeanDefinition bf : this.resolverBeanDefinitionMap.values()) {
+            // has been DI
             if (Objects.nonNull(bf.getValue())) {
                 continue;
             }
-            bf.setProcessing(true);
-            createBean(bf);
+            // 先创建
+            if (Objects.isNull(bf.getPreValue())) {
+                createBean(bf);
+            }
+            // 注入依赖
+            injectBean(bf);
         }
     }
 
-    private void createBean(BeanDefinition bf) {
-        List<ConstructorDefinition> constructorDefinitions = bf.getConstructorDefinitions();
-        Class<?>[] paramTypes = new Class<?>[constructorDefinitions.size()];
-        Object[] params = new Object[constructorDefinitions.size()];
-        for (int i = 0; i < constructorDefinitions.size(); i++) {
-            ConstructorDefinition cd = constructorDefinitions.get(i);
-            BeanDefinition paramBf = this.resolverBeanDefinitionMap.get(cd.getName());
-            // todo
+    /**
+     * 注入bean 依赖
+     *
+     * @param bf bean definition
+     */
+    private void injectBean(BeanDefinition bf) {
+        assert Objects.nonNull(bf.getPreValue()) : "When inject bean, the bean must has been created";
+        try {
+            for (PropertyDefinition pd : bf.getPropertyDefinitions()) {
+                BeanDefinition propertyBf = findBeanDefinition(pd);
+                if (Objects.isNull(propertyBf.getPreValue())) {
+                    createBean(propertyBf);
+                }
+                pd.getMethod().invoke(bf.getPreValue(), propertyBf.getPreValue());
+            }
+
+            bf.setValue(bf.getPreValue());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取一个bean definition
+     *
+     * @param nameDefinition name
+     * @return bean definition
+     */
+    private BeanDefinition findBeanDefinition(NameDefinition nameDefinition) {
+        assert Objects.nonNull(this.resolverBeanDefinitionMap) : "When find a bean definition, the map must not be empty";
+        if (StringUtils.isNoneBlank(nameDefinition.getName())) {
+            BeanDefinition res = this.resolverBeanDefinitionMap.get(nameDefinition.getName());
+            if (Objects.isNull(res)) {
+                throw new RuntimeException("No bean name of " + nameDefinition.getName());
+            }
+            return res;
+        }
+        BeanDefinition res;
+        for (String name : nameDefinition.getClassNames()) {
+            res = this.resolverBeanDefinitionMap.get(name);
+            if (Objects.nonNull(res)) {
+                return res;
+            }
         }
 
+        for (String name : nameDefinition.getInterfaceNames()) {
+            res = this.resolverBeanDefinitionMap.get(name);
+            if (Objects.nonNull(res)) {
+                return res;
+            }
+        }
+        throw new RuntimeException("No bean name of " + nameDefinition);
+    }
+
+    /**
+     * 创建bean
+     *
+     * @param bf bean definition
+     */
+    private void createBean(BeanDefinition bf) {
+        bf.setCreating(true);
+        try {
+            List<ConstructorDefinition> constructorDefinitions = bf.getConstructorDefinitions();
+            Class<?>[] paramTypes = new Class<?>[constructorDefinitions.size()];
+            Object[] params = new Object[constructorDefinitions.size()];
+            for (int i = 0; i < constructorDefinitions.size(); i++) {
+                ConstructorDefinition cd = constructorDefinitions.get(i);
+                BeanDefinition paramBf = findBeanDefinition(cd);
+                if (paramBf.isCreating()) {
+                    throw new RuntimeException("There has a circular dependency " + bf.getType().getName() + " <-> " + paramBf.getType().getName());
+                }
+                if (Objects.isNull(paramBf.getPreValue())) {
+                    createBean(paramBf);
+                }
+                paramTypes[i] = cd.getType();
+                params[i] = paramBf.getPreValue();
+            }
+
+            bf.setPreValue(bf.getType().getConstructor(paramTypes).newInstance(params));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            bf.setCreating(false);
+        }
     }
 
     /**
@@ -191,7 +271,7 @@ public class BeanFactoryImpl implements BeanFactory {
 
                 // 参数只有一个
                 Class<?> pt = method.getParameterTypes()[0];
-                res.add(new PropertyDefinition(method, name, ClassUtils.getClassNames(pt), ClassUtils.getInterfaceNames(pt)));
+                res.add(new PropertyDefinition(name, ClassUtils.getClassNames(pt), ClassUtils.getInterfaceNames(pt), method));
             }
         }
         return res;
@@ -249,11 +329,19 @@ public class BeanFactoryImpl implements BeanFactory {
 
     @Override
     public <T> T getBean(String name, Class<T> tClass) {
-        return null;
+        if (!init) {
+            init();
+        }
+        BeanDefinition bf = findBeanDefinition(new NameDefinition(name, ClassUtils.getClassNames(tClass), ClassUtils.getInterfaceNames(tClass)));
+        if (Objects.isNull(bf)) {
+            return null;
+        }
+        assert tClass.isAssignableFrom(bf.getType()) : "The bean should be assignable to class";
+        return tClass.cast(bf.getValue());
     }
 
     @Override
     public <T> T getBean(Class<T> tClass) {
-        return null;
+        return this.getBean(StringUtils.EMPTY, tClass);
     }
 }

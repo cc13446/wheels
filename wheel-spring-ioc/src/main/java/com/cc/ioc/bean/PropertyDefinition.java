@@ -1,6 +1,7 @@
 package com.cc.ioc.bean;
 
-import lombok.Data;
+import com.cc.ioc.bean.base.NameDefinition;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.lang.reflect.Method;
@@ -11,11 +12,13 @@ import java.util.Set;
  * @author cc
  * @date 2023/9/30
  */
-@Data
+@Getter
 @ToString
-public class PropertyDefinition {
+public class PropertyDefinition extends NameDefinition {
     private final Method method;
-    private final String name;
-    private final Set<String> classNames;
-    private final Set<String> interfaceNames;
+
+    public PropertyDefinition(String name, Set<String> classNames, Set<String> interfaceNames, Method method) {
+        super(name, classNames, interfaceNames);
+        this.method = method;
+    }
 }

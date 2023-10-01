@@ -1,5 +1,6 @@
 package com.cc.ioc.bean;
 
+import com.cc.ioc.bean.base.NameDefinition;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,12 +15,9 @@ import java.util.Set;
  */
 @Getter
 @ToString
-public class BeanDefinition {
+public class BeanDefinition extends NameDefinition {
 
     private final boolean primary;
-    private final String name;
-    private final Set<String> classNames;
-    private final Set<String> interfaceNames;
     private final List<ConstructorDefinition> constructorDefinitions;
     private final List<PropertyDefinition> propertyDefinitions;
     private final Class<?> type;
@@ -29,7 +27,7 @@ public class BeanDefinition {
     @Setter
     private volatile Object preValue;
     @Setter
-    private volatile boolean processing;
+    private volatile boolean creating;
 
     public BeanDefinition(boolean primary,
                           String name,
@@ -38,10 +36,8 @@ public class BeanDefinition {
                           List<ConstructorDefinition> constructorDefinitions,
                           List<PropertyDefinition> propertyDefinitions,
                           Class<?> type) {
+        super(name, classNames, interfaceNames);
         this.primary = primary;
-        this.name = name;
-        this.classNames = classNames;
-        this.interfaceNames = interfaceNames;
         this.constructorDefinitions = constructorDefinitions;
         this.propertyDefinitions = propertyDefinitions;
         this.type = type;
