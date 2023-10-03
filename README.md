@@ -12,3 +12,4 @@ gradle : 8.1.1
 4. The datasource pool factory in mybatis
 5. A message queue using file
 6. The ioc framework in spring
+7. The annotation processor in lombok
