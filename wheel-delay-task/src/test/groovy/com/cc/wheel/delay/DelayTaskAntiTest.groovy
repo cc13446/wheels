@@ -26,9 +26,9 @@ class DelayTaskAntiTest extends Specification {
         listeningExecutor.execute(delayTaskRunner)
         String namespace = "ns"
         String id = "id"
-        ListenableFuture<Integer> four = delayTaskRunner.putTask(new DelayTask(namespace, id, 4L, () -> 4))
-        ListenableFuture<Integer> third = delayTaskRunner.putTask(new DelayTask(namespace, id, 3L, () -> 3))
-        ListenableFuture<Integer> two = delayTaskRunner.putTask(new DelayTask(namespace, id, 2L, () -> 2))
+        ListenableFuture<Integer> four = delayTaskRunner.putTask(new DelayTask(namespace, id, 10L, () -> 4))
+        ListenableFuture<Integer> third = delayTaskRunner.putTask(new DelayTask(namespace, id, 10L, () -> 3))
+        ListenableFuture<Integer> two = delayTaskRunner.putTask(new DelayTask(namespace, id, 10L, () -> 2))
         ListenableFuture<Integer> one = delayTaskRunner.putAntiShakeTask(new DelayTask(namespace, id, 1L, () -> 1))
 
         when:

@@ -1,7 +1,7 @@
 package com.cc.wheel.queue
 
-import com.cc.wheel.queue.FileQueue
 import com.cc.wheel.queue.impl.FileQueueImpl
+import groovy.util.logging.Slf4j
 import spock.lang.Specification
 
 import java.util.concurrent.Callable
@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong
  * @author cc
  * @date 2023/9/20
  */
+@Slf4j
 class FileQueueTest extends Specification{
 
     def "test file queue"() {
@@ -50,8 +51,9 @@ class FileQueueTest extends Specification{
             }
             futures.add(executor.submit(task))
         }
-
-        Thread.sleep(1000 * 10)
+        for (def i = 0; i < 20 && res.get() > 0; i++) {
+            Thread.sleep(1000)
+        }
 
         then:
         res.get() == 0

@@ -1,6 +1,9 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 subprojects {
+    if (this.name.equals("wheel-lombok-annotation")) {
+        return@subprojects
+    }
     apply(plugin = "java")
     apply(plugin = "groovy")
     apply(plugin = "application")
@@ -35,6 +38,7 @@ subprojects {
         "implementation"(platform("org.spockframework:spock-bom:$spockVersion"))
         "testImplementation"("org.spockframework:spock-core")
         "testImplementation"("org.spockframework:spock-junit4")
+        "testImplementation"("junit:junit:4.13.2")
 
         // apache utils
         "implementation"("org.apache.commons:commons-lang3:$apacheCommonsLangVersion")
@@ -55,8 +59,6 @@ subprojects {
     }
 
     tasks.withType<Test> {
-        useJUnitPlatform()
-
         testLogging {
             events = setOf(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
             this.showStandardStreams = true

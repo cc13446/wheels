@@ -107,7 +107,7 @@ class DelayTaskTest extends Specification {
         ListenableFuture<Integer> third = delayTaskRunner.putTask(new DelayTask(namespace, id, 3L, () -> 3))
         ListenableFuture<Integer> two = delayTaskRunner.putTask(new DelayTask(namespace, id, 2L, () -> 2))
         ListenableFuture<Integer> one = delayTaskRunner.putTask(new DelayTask(namespace, id, 1L, () -> 1))
-        ListenableFuture<Integer> four = delayTaskRunner.putTask(new DelayTask(namespace, id, 5L, () -> 4))
+        ListenableFuture<Integer> four = delayTaskRunner.putTask(new DelayTask(namespace, id, 8L, () -> 4))
 
         when:
         def res = []
