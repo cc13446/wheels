@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
- * bean 构造期定义
+ * bean set方法注入定义
  * @author cc
  * @date 2023/9/30
  */

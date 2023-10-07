@@ -7,7 +7,7 @@ import lombok.ToString;
 import java.util.Set;
 
 /**
- * bean 构造方法定义
+ * bean 构造方法参数定义
  * @author cc
  * @date 2023/9/30
  */
