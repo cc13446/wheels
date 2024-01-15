@@ -14,3 +14,4 @@ gradle : 8.1.1
 6. The ioc framework in spring
 7. The annotation processor in lombok
 8. The ring buffer in disruptor
+9. The fast thread local in netty

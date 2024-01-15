@@ -13,3 +13,4 @@ include("wheel-lombok-annotation:wheel-annotation-processor")
 include("wheel-lombok-annotation:wheel-annotation-test")
 
 include("wheel-disruptor-ring")
+include("wheel-netty-local")
