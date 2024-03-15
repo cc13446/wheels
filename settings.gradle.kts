@@ -15,3 +15,8 @@ include("wheel-lombok-annotation:wheel-annotation-test")
 include("wheel-disruptor-ring")
 include("wheel-netty-local")
 include("wheel-netty-timer")
+
+include("wheel-class-loader")
+include("wheel-class-loader:wheel-class-loader-demo")
+include("wheel-class-loader:wheel-class-loader-impl")
+include("wheel-class-loader:wheel-class-loader-interface")

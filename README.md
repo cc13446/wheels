@@ -16,3 +16,4 @@ gradle : 8.1.1
 8. The ring buffer in disruptor
 9. The fast thread local in netty
 10. The wheel timer in netty
+11. A hot deployable and isolated class loader
